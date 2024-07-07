@@ -115,8 +115,8 @@ class ImageEdWindow(QMainWindow):
         main_widget.setLayout(layout)
         self.setCentralWidget(main_widget)
 
-        self.setFixedWidth(1000)
-        self.setFixedHeight(800)
+        self.setFixedWidth(900)
+        self.setFixedHeight(1200)
 
     def load_image(self):
         """
@@ -132,7 +132,7 @@ class ImageEdWindow(QMainWindow):
             self.show_image()
 
     def resize_image(self):
-
+        return
 
 
     def load_photo(self):
