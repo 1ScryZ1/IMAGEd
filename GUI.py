@@ -132,11 +132,7 @@ class ImageEdWindow(QMainWindow):
             self.show_image()
 
     def resize_image(self):
-        resized_image = int(self.width_value_input.text() and self.height_value_input.text())
-        self.imaged.decrease_brightness(resized_image)
-        self.label.setText("Размер изображения успешно изменен")
-        self.update_buttons_state()
-        self.show_image()
+
 
 
     def load_photo(self):
