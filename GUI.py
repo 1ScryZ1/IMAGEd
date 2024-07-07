@@ -57,11 +57,6 @@ class ImageEdWindow(QMainWindow):
         self.channel_RGB.setEnabled(False)
         layout.addWidget(self.channel_RGB)
 
-        self.size_button = QPushButton("Изменить размер изображения")
-        self.size_button.clicked.connect(self.resize_image)
-        self.size_button.setEnabled(False)
-        layout.addWidget(self.size_button)
-
         self.brightness_button = QPushButton("Понизить яркость изображения")
         self.brightness_button.clicked.connect(self.decrease_brightness)
         self.brightness_button.setEnabled(False)
