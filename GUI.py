@@ -19,7 +19,6 @@ def convert_pil_to_qimage(pil_image):
 class ImageEdWindow(QMainWindow):
     """
     Класс, описывающий поведение графического интерфейса пользователя (GUI)
-    GUI работает на библиотеке PyQT
     """
     def __init__(self):
         super().__init__()
