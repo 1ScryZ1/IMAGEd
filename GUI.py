@@ -22,7 +22,6 @@ class ImageEditorWindow(QMainWindow):
     """
     Класс, описывающий поведение графического интерфейса пользователя (GUI)
     GUI работает на библиотеке PyQT
-    Поля ввода защищены от некорректного пользовательского ввода внутренними инструментами PyQt
     """
     def __init__(self):
         """
@@ -63,7 +62,7 @@ class ImageEditorWindow(QMainWindow):
         self.channel_combo.addItem("Красный (R)")
         self.channel_combo.addItem("Зеленый (G)")
         self.channel_combo.addItem("Синий (B)")
-        # Првязываем к комбобоксу метод update_image_channel
+        # Привязываем к боксу метод update_image_channel
         self.channel_combo.currentIndexChanged.connect(self.update_image_channel)
         self.channel_combo.setEnabled(False)
         layout.addWidget(self.channel_combo)
@@ -73,13 +72,13 @@ class ImageEditorWindow(QMainWindow):
         self.size_button.setEnabled(False)
         layout.addWidget(self.size_button)
 
-        self.brightness_button = QPushButton("Понизить яркость")
+        self.brightness_button = QPushButton("Понизить яркость изображения")
         # Привязываем метод decrease_brightness к кнопке
         self.brightness_button.clicked.connect(self.decrease_brightness)
         self.brightness_button.setEnabled(False)
         layout.addWidget(self.brightness_button)
 
-        self.circle_button = QPushButton("Нарисовать круг")
+        self.circle_button = QPushButton("Нарисовать круг на изображении")
         # Привязываем к кнопке метод draw_circle
         self.circle_button.clicked.connect(self.draw_circle)
         self.circle_button.setEnabled(False)
@@ -93,14 +92,14 @@ class ImageEditorWindow(QMainWindow):
         layout.addWidget(self.brightness_value_input)
 
         self.circle_x_input = QLineEdit()
-        self.circle_x_input.setPlaceholderText("X центра круга")
+        self.circle_x_input.setPlaceholderText("X относительно центра круга")
         # Привязываем метод check_inputs к QLine объекту
         self.circle_x_input.textChanged.connect(self.check_inputs)
         self.circle_x_input.setValidator(QIntValidator(0, 9999, self))
         layout.addWidget(self.circle_x_input)
 
         self.circle_y_input = QLineEdit()
-        self.circle_y_input.setPlaceholderText("Y центра круга")
+        self.circle_y_input.setPlaceholderText("Y относительно центра круга")
         # Привязываем метод check_inputs к QLine объекту
         self.circle_y_input.textChanged.connect(self.check_inputs)
         self.circle_y_input.setValidator(QIntValidator(0, 9999, self))
@@ -135,7 +134,7 @@ class ImageEditorWindow(QMainWindow):
         if file_path:
             self.image_editor.load_image(file_path)
             self.is_image_loaded = True
-            self.label.setText("Изображение загружено")
+            self.label.setText("Изображение успешно загружено")
             self.update_buttons_state()
             self.show_image()
 
@@ -199,7 +198,7 @@ class ImageEditorWindow(QMainWindow):
 
     def decrease_brightness(self):
         """
-        метод для изменения яркости изображения
+        Метод для изменения яркости изображения
         :return:
         """
         decrease_value = int(self.brightness_value_input.text())
@@ -210,7 +209,7 @@ class ImageEditorWindow(QMainWindow):
 
     def draw_circle(self):
         """
-        метод для круга на изображении
+        Метод для круга на изображении
         :return:
         """
         center_x = int(self.circle_x_input.text())
@@ -223,7 +222,7 @@ class ImageEditorWindow(QMainWindow):
 
     def save_image(self):
         """
-        метод для сохранения изображения
+        Метод для сохранения изображения
         :return:
         """
         try:
@@ -232,19 +231,19 @@ class ImageEditorWindow(QMainWindow):
 
             if file_path:
                 self.image_editor.save_image(file_path)
-                self.label.setText("Изображение сохранено")
+                self.label.setText("Изображение успешно сохранено")
         except Exception as e:
             error = QMessageBox()
-            error.setWindowTitle("Ошибка!!!")
-            error.setText("Произошла ошибка при сохранении файла!!!")
+            error.setWindowTitle("Ошибка!")
+            error.setText("Произошла ошибка при сохранении файла!")
             error.setIcon(QMessageBox.Warning)
             error.setStandardButtons(QMessageBox.Ok)
-            error.setInformativeText("Проверьте расширение сохраняемого файла.")
+            error.setInformativeText("Проверьте расширение сохраняемого файла")
             error.exec_()
 
     def check_inputs(self):
         """
-        метод активации и деактивации кнопок
+        Метод активации и деактивации кнопок
         Проверяем поля ввода, если нужные поля активны, то кнопки активируются
         :return:
         """
