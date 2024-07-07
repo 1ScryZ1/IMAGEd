@@ -24,15 +24,15 @@ class ImageEdWindow(QMainWindow):
 
         self.setWindowTitle("IMAGEd")
         self.imaged = ImageEd()
-        self.is_image_loaded = False
+        self.imageloader = False
 
-        self.setup_ui()
+        self.UIsetup()
 
-    def setup_ui(self):
+    def UIsetup(self):
         """
         Настройка интерфейса
         """
-        main_widget = QWidget()
+        mwidget = QWidget()
         layout = QVBoxLayout()
 
         self.label = QLabel("Загрузите изображение")
@@ -44,7 +44,7 @@ class ImageEdWindow(QMainWindow):
         layout.addWidget(self.btn_load)
 
         self.btn_photo = QPushButton("Сделать фотографию")
-        self.btn_photo.clicked.connect(self.load_photo)
+        self.btn_photo.clicked.connect(self.photoloader)
         layout.addWidget(self.btn_photo)
 
         self.channel_RGB = QComboBox()
@@ -62,7 +62,7 @@ class ImageEdWindow(QMainWindow):
         layout.addWidget(self.btn_resize)
 
         self.btn_brightness = QPushButton("Понизить яркость изображения")
-        self.btn_brightness.clicked.connect(self.decrease_brightness)
+        self.btn_brightness.clicked.connect(self.dimming())
         self.btn_brightness.setEnabled(False)
         layout.addWidget(self.btn_brightness)
 
@@ -71,23 +71,23 @@ class ImageEdWindow(QMainWindow):
         self.btn_circle.setEnabled(False)
         layout.addWidget(self.btn_circle)
 
-        self.width_value_input = QLineEdit()
-        self.width_value_input.setPlaceholderText("Новая ширина изображения")
-        self.width_value_input.textChanged.connect(self.check_inputs)
-        self.width_value_input.setValidator(QIntValidator(0, 999, self))
-        layout.addWidget(self.width_value_input)
+        self.widthvalue_input = QLineEdit()
+        self.widthvalue_input.setPlaceholderText("Новая ширина изображения")
+        self.widthvalue_input.textChanged.connect(self.check_inputs)
+        self.widthvalue_input.setValidator(QIntValidator(0, 999, self))
+        layout.addWidget(self.widthvalue_input)
 
-        self.height_value_input = QLineEdit()
-        self.height_value_input.setPlaceholderText("Новая высота изображения")
-        self.height_value_input.textChanged.connect(self.check_inputs)
-        self.height_value_input.setValidator(QIntValidator(0, 999, self))
-        layout.addWidget(self.height_value_input)
+        self.heightvalue_input = QLineEdit()
+        self.heightvalue_input.setPlaceholderText("Новая высота изображения")
+        self.heightvalue_input.textChanged.connect(self.check_inputs)
+        self.heightvalue_input.setValidator(QIntValidator(0, 999, self))
+        layout.addWidget(self.heightvalue_input)
 
-        self.brightness_value_input = QLineEdit()
-        self.brightness_value_input.setPlaceholderText("Значение, на которое будет понижена яркость изображения")
-        self.brightness_value_input.textChanged.connect(self.check_inputs)
-        self.brightness_value_input.setValidator(QIntValidator(0, 255, self))
-        layout.addWidget(self.brightness_value_input)
+        self.brightvalue_input = QLineEdit()
+        self.brightvalue_input.setPlaceholderText("Значение, на которое будет понижена яркость изображения")
+        self.brightvalue_input.textChanged.connect(self.check_inputs)
+        self.brightvalue_input.setValidator(QIntValidator(0, 255, self))
+        layout.addWidget(self.brightvalue_input)
 
         self.circle_x_input = QLineEdit()
         self.circle_x_input.setPlaceholderText("Размещение по X центра круга")
@@ -101,19 +101,19 @@ class ImageEdWindow(QMainWindow):
         self.circle_y_input.setValidator(QIntValidator(0, 9999, self))
         layout.addWidget(self.circle_y_input)
 
-        self.circle_radius_input = QLineEdit()
-        self.circle_radius_input.setPlaceholderText("Радиус круга")
-        self.circle_radius_input.textChanged.connect(self.check_inputs)
-        self.circle_radius_input.setValidator(QIntValidator(0, 9999, self))
-        layout.addWidget(self.circle_radius_input)
+        self.cirradius_input = QLineEdit()
+        self.cirradius_input.setPlaceholderText("Радиус круга")
+        self.cirradius_input.textChanged.connect(self.check_inputs)
+        self.cirradius_input.setValidator(QIntValidator(0, 9999, self))
+        layout.addWidget(self.cirradius_input)
 
         self.btn_save = QPushButton("Сохранить изображение")
         self.btn_save.clicked.connect(self.save_image)
         self.btn_save.setEnabled(False)
         layout.addWidget(self.btn_save)
 
-        main_widget.setLayout(layout)
-        self.setCentralWidget(main_widget)
+        mwidget.setLayout(layout)
+        self.setCentralWidget(mwidget)
 
         self.setFixedWidth(900)
         self.setFixedHeight(1200)
@@ -126,17 +126,17 @@ class ImageEdWindow(QMainWindow):
 
         if file_path:
             self.imaged.load_image(file_path)
-            self.is_image_loaded = True
+            self.imageloader = True
             self.label.setText("Изображение успешно загружено")
-            self.update_buttons_state()
+            self.btn_updateSt()
             self.show_image()
 
     def resize_image(self):
         return
 
 
-    def load_photo(self):
-        photo = self.imaged.load_photo()
+    def photoloader(self):
+        photo = self.imaged.photoloader()
 
         if photo is None:
             error = QMessageBox()
@@ -148,9 +148,9 @@ class ImageEdWindow(QMainWindow):
             error.exec_()
         else:
             self.imaged.image = photo
-            self.is_image_loaded = True
+            self.imageloader = True
             self.label.setText("Фотография сделана успешно")
-            self.update_buttons_state()
+            self.btn_updateSt()
             self.show_image()
 
     def update_image_channel(self):
@@ -179,14 +179,14 @@ class ImageEdWindow(QMainWindow):
         except Exception as e:
             print(str(e))
 
-    def decrease_brightness(self):
+    def dimming(self):
         """
         Метод для изменения яркости изображения
         """
-        decrease_value = int(self.brightness_value_input.text())
-        self.imaged.decrease_brightness(decrease_value)
+        decrease_value = int(self.brightvalue_input.text())
+        self.imaged.dimming(decrease_value)
         self.label.setText("Яркость успешно понижена")
-        self.update_buttons_state()
+        self.btn_updateSt()
         self.show_image()
 
     def draw_circle(self):
@@ -195,10 +195,10 @@ class ImageEdWindow(QMainWindow):
         """
         center_x = int(self.circle_x_input.text())
         center_y = int(self.circle_y_input.text())
-        radius = int(self.circle_radius_input.text())
+        radius = int(self.cirradius_input.text())
         self.imaged.draw_circle(center_x, center_y, radius)
         self.label.setText("Круг успешно нарисован")
-        self.update_buttons_state()
+        self.btn_updateSt()
         self.show_image()
 
     def save_image(self):
@@ -225,30 +225,30 @@ class ImageEdWindow(QMainWindow):
         """
         Метод активации и деактивации кнопок
         """
-        brightness = self.brightness_value_input.text()
+        brightness = self.brightvalue_input.text()
         circle_x = self.circle_x_input.text()
         circle_y = self.circle_y_input.text()
-        circle_radius = self.circle_radius_input.text()
+        circle_radius = self.cirradius_input.text()
 
-        self.channel_RGB.setEnabled(self.is_image_loaded)
-        self.btn_load.setEnabled(self.is_image_loaded)
-        self.btn_resize.setEnabled(self.is_image_loaded)
-        self.btn_brightness.setEnabled(bool(brightness) and self.is_image_loaded)
+        self.channel_RGB.setEnabled(self.imageloader)
+        self.btn_load.setEnabled(self.imageloader)
+        self.btn_resize.setEnabled(self.imageloader)
+        self.btn_brightness.setEnabled(bool(brightness) and self.imageloader)
         self.btn_circle.setEnabled(bool(circle_x)
                                       and bool(circle_y)
                                       and bool(circle_radius)
-                                      and self.is_image_loaded)
-        self.btn_save.setEnabled(self.is_image_loaded)
+                                      and self.imageloader)
+        self.btn_save.setEnabled(self.imageloader)
 
-    def update_buttons_state(self):
+    def btn_updateSt(self):
         """
         Обновление состояния кнопок
         """
         self.check_inputs()
-        self.brightness_value_input.clear()
+        self.brightvalue_input.clear()
         self.circle_x_input.clear()
         self.circle_y_input.clear()
-        self.circle_radius_input.clear()
+        self.cirradius_input.clear()
 
     def show_image(self):
         """

@@ -27,7 +27,7 @@ class ImageEd:
 
 
     @staticmethod
-    def load_photo():
+    def photoloader():
         """
         Метод для получения изображения с веб-камеры пользователя
         """
@@ -70,7 +70,7 @@ class ImageEd:
         except Exception as e:
             print(str(e))
 
-    def decrease_brightness(self, value):
+    def dimming(self, value):
         """
         Уменьшает яркость на заданное значение
         """
@@ -91,8 +91,8 @@ class ImageEd:
         Добавляет круг на изображение
         """
         draw = ImageDraw.Draw(self.image)
-        color = (255, 0, 0)  # Красный цвет (RGB формат)
-        outline_width = 2  # Толщина контура
+        color = (255, 0, 0)
+        outline_width = 5
 
         top_left = (center_x - radius, center_y - radius)
         bottom_right = (center_x + radius, center_y + radius)
