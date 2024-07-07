@@ -56,13 +56,10 @@ class ImageEdWindow(QMainWindow):
         self.channel_RGB.setEnabled(False)
         layout.addWidget(self.channel_RGB)
 
-        self.label_width = QLabel('Ширина:')
-        self.input_width = QLineEdit()
-
-        self.label_height = QLabel('Высота:')
-        self.input_height = QLineEdit()
-
-        self.image_label = QLabel()
+        self.btn_resize = QPushButton("Изменить размер изображения")
+        self.btn_resize.clicked.connect(self.resize_image)
+        self.btn_resize.setEnabled(False)
+        layout.addWidget(self.btn_resize)
 
         self.btn_brightness = QPushButton("Понизить яркость изображения")
         self.btn_brightness.clicked.connect(self.decrease_brightness)
@@ -73,6 +70,18 @@ class ImageEdWindow(QMainWindow):
         self.btn_circle.clicked.connect(self.draw_circle)
         self.btn_circle.setEnabled(False)
         layout.addWidget(self.btn_circle)
+
+        self.width_value_input = QLineEdit()
+        self.width_value_input.setPlaceholderText("Новая ширина изображения")
+        self.width_value_input.textChanged.connect(self.check_inputs)
+        self.width_value_input.setValidator(QIntValidator(0, 999, self))
+        layout.addWidget(self.width_value_input)
+
+        self.height_value_input = QLineEdit()
+        self.height_value_input.setPlaceholderText("Новая высота изображения")
+        self.height_value_input.textChanged.connect(self.check_inputs)
+        self.height_value_input.setValidator(QIntValidator(0, 999, self))
+        layout.addWidget(self.height_value_input)
 
         self.brightness_value_input = QLineEdit()
         self.brightness_value_input.setPlaceholderText("Значение, на которое будет понижена яркость изображения")
@@ -98,10 +107,10 @@ class ImageEdWindow(QMainWindow):
         self.circle_radius_input.setValidator(QIntValidator(0, 9999, self))
         layout.addWidget(self.circle_radius_input)
 
-        self.save_button = QPushButton("Сохранить изображение")
-        self.save_button.clicked.connect(self.save_image)
-        self.save_button.setEnabled(False)
-        layout.addWidget(self.save_button)
+        self.btn_save = QPushButton("Сохранить изображение")
+        self.btn_save.clicked.connect(self.save_image)
+        self.btn_save.setEnabled(False)
+        layout.addWidget(self.btn_save)
 
         main_widget.setLayout(layout)
         self.setCentralWidget(main_widget)
@@ -121,6 +130,14 @@ class ImageEdWindow(QMainWindow):
             self.label.setText("Изображение успешно загружено")
             self.update_buttons_state()
             self.show_image()
+
+    def resize_image(self):
+        resized_image = int(self.width_value_input.text() and self.height_value_input.text())
+        self.imaged.decrease_brightness(resized_image)
+        self.label.setText("Размер изображения успешно изменен")
+        self.update_buttons_state()
+        self.show_image()
+
 
     def load_photo(self):
         photo = self.imaged.load_photo()
@@ -219,12 +236,13 @@ class ImageEdWindow(QMainWindow):
 
         self.channel_RGB.setEnabled(self.is_image_loaded)
         self.btn_load.setEnabled(self.is_image_loaded)
+        self.btn_resize.setEnabled(self.is_image_loaded)
         self.btn_brightness.setEnabled(bool(brightness) and self.is_image_loaded)
         self.btn_circle.setEnabled(bool(circle_x)
                                       and bool(circle_y)
                                       and bool(circle_radius)
                                       and self.is_image_loaded)
-        self.save_button.setEnabled(self.is_image_loaded)
+        self.btn_save.setEnabled(self.is_image_loaded)
 
     def update_buttons_state(self):
         """

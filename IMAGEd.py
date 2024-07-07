@@ -44,7 +44,6 @@ class ImageEd:
             if ret:
                 frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-                # Создаем объект изображения библиотеки Pillow
                 pil_image = Image.fromarray(frame_rgb)
 
             return pil_image.convert("RGB")
