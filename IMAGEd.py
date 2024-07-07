@@ -70,7 +70,10 @@ class ImageEd:
         except Exception as e:
             print(str(e))
 
-    def dimming(self, value):
+    def resizer(self, width, height):
+        self.image = self.image.resize((width, height))
+
+    def decrease_brightness(self, value):
         """
         Уменьшает яркость на заданное значение
         """
