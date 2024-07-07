@@ -2,7 +2,7 @@ from PIL import Image, ImageDraw
 import cv2
 
 
-class ImageEditor:
+class ImageEd:
     """
     Класс, содержащий основной функционал редактирования изображений
     """
@@ -16,8 +16,6 @@ class ImageEditor:
     def load_image(self, file_path):
         """
         Загрузка изображения
-        :param file_path: Путь к файлу
-        :return: None если ошибка
         """
         try:
             self.image = Image.open(file_path)
@@ -31,9 +29,6 @@ class ImageEditor:
     def load_photo():
         """
         Метод для получения изображения с веб-камеры пользователя
-        :return: Image. если ошибка
-        :return: Фотография(PIL.Image.Image)
-
         """
         try:
             # Включает камеру
@@ -56,7 +51,7 @@ class ImageEditor:
                 # Создаем объект изображения библиотеки Pillow
                 pil_image = Image.fromarray(frame_rgb)
 
-            return pil_image
+            return pil_image.convert("RGB")
 
 
         except Exception as e:
@@ -66,57 +61,35 @@ class ImageEditor:
     def split_channels(self):
         """
         Разделение изображения на отдельные цветовые каналы
-        :return: Список изображений
         """
         return self.image.split()
 
     def show_image(self):
         """
         Отображает изображение
-        :return:
         """
         self.image.show()
 
-    def _image(self):
+    def image_channel(self, channel):
         """
-        Изменение размера изображения
-        Отдельно прописано инвертирование разного количества каналов,
-        иначе при работе с одноцветным изображением ошибка
-        :return:
+        Получение канала изображения
         """
         try:
-            width, height = self.image.size
-            size_image = Image.new(self.image.mode, (width, height))
-            pixels = self.image.load()
-            negative_pixels = size_image.load()
-            for x in range(width):
-                for y in range(height):
-                    if len(pixels[x, y]) == 1:
-                        # Изображение с одним каналом цвета
-                        inverted_color = 255 - pixels[x, y]
-                        negative_pixels[x, y] = inverted_color
-                    elif len(pixels[x, y]) == 2:
-                        # Изображение с двумя каналами цвета
-                        r, g = pixels[x, y]
-                        inverted_color = (255 - r, 255 - g)
-                        negative_pixels[x, y] = inverted_color
-                    elif len(pixels[x, y]) >= 3:
-                        # Обычное изображение с тремя или четырьмя каналами цвета (RGB или RGBA)
-                        r, g, b = pixels[x, y][:3]
-                        inverted_color = (255 - r, 255 - g, 255 - b)
-                        negative_pixels[x, y] = inverted_color
-                    else:
-                        # Неожиданное количество каналов цвета, игнорируем пиксель
-                        negative_pixels[x, y] = pixels[x, y]
-            self.image = size_image
+            image = self.image.convert("RGB")
+            red, green, blue = image.split()
+            empty_pixels = red.point(lambda _: 0)
+            red_merge = Image.merge("RGB", (red, empty_pixels, empty_pixels))
+            green_merge = Image.merge("RGB", (empty_pixels, green, empty_pixels))
+            blue_merge = Image.merge("RGB", (empty_pixels, empty_pixels, blue))
+            channels_list = [red_merge, green_merge, blue_merge]
+            return channels_list[channel]
+
         except Exception as e:
             print(str(e))
 
     def decrease_brightness(self, value):
         """
-        Изменяет (уменьшает) яркость на заданное значение
-        :param value: Значение, на которое будет уменьшена яркость
-        :return:
+        Уменьшает яркость на заданное значение
         """
 
         if value > 255:
@@ -150,8 +123,6 @@ class ImageEditor:
     def save_image(self, file_path):
         """
         Сохраняет изображение
-        :param file_path: путь к файлу
-        :return:
         """
 
         self.image.save(file_path)

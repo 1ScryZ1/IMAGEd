@@ -1,8 +1,8 @@
 from PyQt5.QtWidgets import QApplication
-from GUI import ImageEditorWindow
+from GUI import ImageEdWindow
 
 if __name__ == "__main__":
     app = QApplication([])
-    window = ImageEditorWindow()
+    window = ImageEdWindow()
     window.show()
     app.exec_()
