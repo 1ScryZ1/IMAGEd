@@ -56,7 +56,13 @@ class ImageEdWindow(QMainWindow):
         self.channel_RGB.setEnabled(False)
         layout.addWidget(self.channel_RGB)
 
+        self.label_width = QLabel('Ширина:')
+        self.input_width = QLineEdit()
 
+        self.label_height = QLabel('Высота:')
+        self.input_height = QLineEdit()
+
+        self.image_label = QLabel()
 
         self.btn_brightness = QPushButton("Понизить яркость изображения")
         self.btn_brightness.clicked.connect(self.decrease_brightness)
