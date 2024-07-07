@@ -19,6 +19,7 @@ class ImageEd:
         """
         try:
             self.image = Image.open(file_path)
+            self.image = self.image.convert("RGB")
 
         except Exception as e:
             print("Ошибка при загрузке изображения:", str(e))
@@ -31,21 +32,16 @@ class ImageEd:
         Метод для получения изображения с веб-камеры пользователя
         """
         try:
-            # Включает камеру
-            cap = cv2.VideoCapture(0)
+            wbcam = cv2.VideoCapture(0)
 
-            # Прогрев камеры
             for i in range(10):
-                cap.read()
+                wbcam.read()
 
-            # Делает снимок
-            ret, frame = cap.read()
+            ret, frame = wbcam.read()
 
-            # Освобождает ресурсы камеры
-            cap.release()
+            wbcam.release()
 
             if ret:
-                # Конвертирует изображение из OpenCV в numpy
                 frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
                 # Создаем объект изображения библиотеки Pillow
@@ -57,18 +53,6 @@ class ImageEd:
         except Exception as e:
             print("Ошибка при загрузке изображения:", str(e))
             return None
-
-    def split_channels(self):
-        """
-        Разделение изображения на отдельные цветовые каналы
-        """
-        return self.image.split()
-
-    def show_image(self):
-        """
-        Отображает изображение
-        """
-        self.image.show()
 
     def image_channel(self, channel):
         """
@@ -91,7 +75,6 @@ class ImageEd:
         """
         Уменьшает яркость на заданное значение
         """
-
         if value > 255:
             return None
 
@@ -107,10 +90,6 @@ class ImageEd:
     def draw_circle(self, center_x, center_y, radius):
         """
         Добавляет круг на изображение
-        :param center_x: X-координата центра круга
-        :param center_y: Y-координата центра круга
-        :param radius: Радиус круга
-        :return:
         """
         draw = ImageDraw.Draw(self.image)
         color = (255, 0, 0)  # Красный цвет (RGB формат)

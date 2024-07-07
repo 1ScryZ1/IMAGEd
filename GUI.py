@@ -4,10 +4,9 @@ from PyQt5.QtWidgets import QMessageBox, QMainWindow, \
 from PyQt5.QtGui import QPixmap, QImage, QIntValidator
 from PyQt5.QtCore import Qt
 from IMAGEd import ImageEd
-from IMAGEd import Image
 
 
-def convert_pil_to_qimage(pil_image):
+def converterpillow(pil_image):
     """
     Конвертация Pillow-изображения в QImage
     """
@@ -40,13 +39,13 @@ class ImageEdWindow(QMainWindow):
         self.label.setAlignment(Qt.AlignCenter)
         layout.addWidget(self.label)
 
-        self.load_button = QPushButton("Загрузить изображение")
-        self.load_button.clicked.connect(self.load_image)
-        layout.addWidget(self.load_button)
+        self.btn_load = QPushButton("Загрузить изображение")
+        self.btn_load.clicked.connect(self.load_image)
+        layout.addWidget(self.btn_load)
 
-        self.photo_button = QPushButton("Сделать фотографию")
-        self.photo_button.clicked.connect(self.load_photo)
-        layout.addWidget(self.photo_button)
+        self.btn_photo = QPushButton("Сделать фотографию")
+        self.btn_photo.clicked.connect(self.load_photo)
+        layout.addWidget(self.btn_photo)
 
         self.channel_RGB = QComboBox()
         self.channel_RGB.addItem("Все каналы (RGB)")
@@ -57,15 +56,17 @@ class ImageEdWindow(QMainWindow):
         self.channel_RGB.setEnabled(False)
         layout.addWidget(self.channel_RGB)
 
-        self.brightness_button = QPushButton("Понизить яркость изображения")
-        self.brightness_button.clicked.connect(self.decrease_brightness)
-        self.brightness_button.setEnabled(False)
-        layout.addWidget(self.brightness_button)
 
-        self.circle_button = QPushButton("Нарисовать круг на изображении")
-        self.circle_button.clicked.connect(self.draw_circle)
-        self.circle_button.setEnabled(False)
-        layout.addWidget(self.circle_button)
+
+        self.btn_brightness = QPushButton("Понизить яркость изображения")
+        self.btn_brightness.clicked.connect(self.decrease_brightness)
+        self.btn_brightness.setEnabled(False)
+        layout.addWidget(self.btn_brightness)
+
+        self.btn_circle = QPushButton("Нарисовать круг на изображении")
+        self.btn_circle.clicked.connect(self.draw_circle)
+        self.btn_circle.setEnabled(False)
+        layout.addWidget(self.btn_circle)
 
         self.brightness_value_input = QLineEdit()
         self.brightness_value_input.setPlaceholderText("Значение, на которое будет понижена яркость изображения")
@@ -74,13 +75,13 @@ class ImageEdWindow(QMainWindow):
         layout.addWidget(self.brightness_value_input)
 
         self.circle_x_input = QLineEdit()
-        self.circle_x_input.setPlaceholderText("X относительно центра круга")
+        self.circle_x_input.setPlaceholderText("Размещение по X центра круга")
         self.circle_x_input.textChanged.connect(self.check_inputs)
         self.circle_x_input.setValidator(QIntValidator(0, 9999, self))
         layout.addWidget(self.circle_x_input)
 
         self.circle_y_input = QLineEdit()
-        self.circle_y_input.setPlaceholderText("Y относительно центра круга")
+        self.circle_y_input.setPlaceholderText("Размещение по Y центра круга")
         self.circle_y_input.textChanged.connect(self.check_inputs)
         self.circle_y_input.setValidator(QIntValidator(0, 9999, self))
         layout.addWidget(self.circle_y_input)
@@ -133,8 +134,6 @@ class ImageEdWindow(QMainWindow):
             self.update_buttons_state()
             self.show_image()
 
-
-
     def update_image_channel(self):
         """
         Обновляет отображаемый канал изображения
@@ -151,17 +150,8 @@ class ImageEdWindow(QMainWindow):
         """
         try:
             if self.imaged.image:
-                image = self.imaged.image
-                red, green, blue = image.split()
-                empty_pixels = red.point(lambda _:0)
-                red_img = Image.merge("RGB", (red, empty_pixels,
-                                                         empty_pixels))
-                green_img = Image.merge("RGB", (empty_pixels, green,
-                                                         empty_pixels))
-                blue_img = Image.merge("RGB", (empty_pixels, empty_pixels,
-                                                       blue))
-                channel_image = [red_img, green_img, blue_img][channel - 1]
-                qimage = convert_pil_to_qimage(channel_image)
+                channel_image = self.imaged.image_channel(channel - 1)
+                qimage = converterpillow(channel_image)
                 pixmap = QPixmap.fromImage(qimage)
                 scaled_pixmap = pixmap.scaled(self.label.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
                 self.label.setPixmap(scaled_pixmap)
@@ -221,10 +211,10 @@ class ImageEdWindow(QMainWindow):
         circle_y = self.circle_y_input.text()
         circle_radius = self.circle_radius_input.text()
 
-        self.channel.setEnabled(self.is_image_loaded)
-        self.size_button.setEnabled(self.is_image_loaded)
-        self.brightness_button.setEnabled(bool(brightness) and self.is_image_loaded)
-        self.circle_button.setEnabled(bool(circle_x)
+        self.channel_RGB.setEnabled(self.is_image_loaded)
+        self.btn_load.setEnabled(self.is_image_loaded)
+        self.btn_brightness.setEnabled(bool(brightness) and self.is_image_loaded)
+        self.btn_circle.setEnabled(bool(circle_x)
                                       and bool(circle_y)
                                       and bool(circle_radius)
                                       and self.is_image_loaded)
@@ -246,7 +236,7 @@ class ImageEdWindow(QMainWindow):
         """
         if self.imaged.image:
             image = self.imaged.image
-            qimage = convert_pil_to_qimage(image)
+            qimage = converterpillow(image)
             pixmap = QPixmap.fromImage(qimage)
             scaled_pixmap = pixmap.scaled(self.label.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
             self.label.setPixmap(scaled_pixmap)
