@@ -69,10 +69,9 @@ class ImageEd:
 
         except Exception as e:
             print(str(e))
-
-    def resizer(self, width, height):
-        self.image = self.image.resize((width, height))
-
+    def isNaturalNum(num):
+        if num.isdigit():
+            return int(num) > 0
     def decrease_brightness(self, value):
         """
         Уменьшает яркость на заданное значение

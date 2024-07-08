@@ -1,3 +1,4 @@
+import cv2
 from PyQt5.QtWidgets import QMessageBox, QMainWindow, \
                             QLabel, QPushButton, QVBoxLayout, \
                             QWidget, QLineEdit, QFileDialog, QComboBox
@@ -132,9 +133,32 @@ class ImageEdWindow(QMainWindow):
             self.show_image()
 
     def resize_image(self):
-        new_width = int(self.widthvalue_input.text())
-        new_height = int(self.heightvalue_input.text())
-        self.imaged = self.imaged.resizer((new_width, new_height))
+        width = self.widthvalue_input.text()
+        height = self.heightvalue_input.text()
+        if self.isNaturalNum(width) and self.isNaturalNum(height):
+            width = int(width)
+            height = int(height)
+            if width <=800 and height <=800:
+                self.image = cv2.resize(self.imageloader, (width, height))
+                qimage = QImage(self.image.data, self.image.shape[1],
+                                self.image.shape[0], self.image.shape[2]*self.image.shape[1],
+                                QImage.Format_RGB888)
+                pixmap = QPixmap.fromImage(qimage)
+                self.label.setPixmap(pixmap)
+            else:
+                error = QMessageBox()
+                error.setWindowTitle("Ошибка!")
+                error.setText("Максимальный допустимый размер изображения: 800x800")
+                error.setIcon(QMessageBox.Warning)
+                error.setStandardButtons(QMessageBox.Ok)
+                error.exec_()
+        else:
+            error = QMessageBox()
+            error.setWindowTitle("Ошибка!")
+            error.setText("Неверный формат ввода!")
+            error.setIcon(QMessageBox.Warning)
+            error.setStandardButtons(QMessageBox.Ok)
+            error.exec_()
 
 
     def load_photo(self):
